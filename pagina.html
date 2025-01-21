@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de IR</title>
+    <style>
+        /* Incluir la fuente desde SharePoint */
+        @font-face {
+            font-family: 'Oppo Sans';
+            src: url('https://possefy2-my.sharepoint.com/:u:/g/personal/oppocol2_possefy2_onmicrosoft_com/EaCEBeKTg45LkibHRrlQ3eAB-w513HMXeqKA2wB8lDFY8w?e=0GL5Mc') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* Estilo de la página */
+        body {
+            margin: 0;
+            font-family: 'Oppo Sans', Arial, sans-serif;
+            background-color: white;
+            color: black;
+        }
+
+        /* Barra superior */
+        #navbar {
+            background-color: #1d1d1b; /* Tono de color cambiado */
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px; /* Barra 1/4 más delgada */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        #navbar h1 {
+            margin: 0;
+            font-size: 32px; /* Tamaño de letra incrementado */
+        }
+
+        #navbar img {
+            height: 100px; /* Tamaño de la imagen aumentado */
+            margin-right: 40px; /* Ajuste a la izquierda */
+        }
+
+        /* Contenedor principal */
+        #main-content {
+            margin-top: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 120px);
+        }
+
+        #password-form {
+            text-align: center;
+        }
+
+        #password-form input {
+            padding: 5px; /* Reducido el tamaño del campo de entrada */
+            margin-top: 10px;
+            font-size: 14px; /* Reducido el tamaño de la fuente */
+        }
+
+        #password-form button {
+            padding: 5px; /* Reducido el tamaño del botón */
+            font-size: 14px; /* Reducido el tamaño de la fuente */
+            background-color: #201F1C; /* Tono de color cambiado */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #password-form button:hover {
+            background-color: #333;
+        }
+
+        #error-message {
+            color: red;
+            display: none;
+        }
+
+        #report-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra superior -->
+    <div id="navbar">
+        <h1>Reporte de IR</h1>
+        <img src="https://th.bing.com/th/id/OIP.E0Ma8wUHT9O6QhlJrUl7IQHaDI?rs=1&pid=ImgDetMain" alt="OPPO Logo">
+    </div>
+
+    <!-- Contenedor principal -->
+    <div id="main-content">
+        <div id="password-form">
+            <h2>Access Restricted</h2>
+            <p>Please enter the password to view the report:</p>
+            <input type="password" id="password" placeholder="Enter password">
+            <br>
+            <button onclick="validatePassword()">Submit</button>
+            <p id="error-message">Incorrect password. Try again.</p>
+        </div>
+
+        <div id="report-container">
+            <iframe 
+                src="https://app.powerbi.com/view?r=eyJrIjoiNThmZmYyMmMtNmQ0Mi00NTNkLTljNmUtYmM3NmQwZjA3YmZlIiwidCI6IjkyNDJjYWMwLTljODktNDFkYS04OGY4LWNjMjBiMjNiNmQ4ZCJ9" 
+                allowFullScreen="true">
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+        const PASSWORD = "mySecurePassword"; // Replace with your desired password
+
+        function validatePassword() {
+            const inputPassword = document.getElementById("password").value;
+            const errorMessage = document.getElementById("error-message");
+            
+            if (inputPassword === PASSWORD) {
+                document.getElementById("password-form").style.display = "none";
+                document.getElementById("report-container").style.display = "block";
+            } else {
+                errorMessage.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
