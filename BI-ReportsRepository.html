@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IR Reports</title>
+    <style>
+        @font-face {
+            font-family: 'Oppo Sans';
+            src: url('https://possefy2-my.sharepoint.com/:u:/g/personal/oppocol2_possefy2_onmicrosoft_com/EaCEBeKTg45LkibHRrlQ3eAB-w513HMXeqKA2wB8lDFY8w?e=0GL5Mc') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Oppo Sans', Arial, sans-serif;
+            background-color: white;
+            color: black;
+            overflow: hidden;
+        }
+
+        /* Barra de navegación */
+        #navbar {
+            background-color: #1d1d1b;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        #navbar h1 {
+            margin: 0 20px;
+            font-size: 32px;
+        }
+
+        #navbar img {
+            height: 100px;
+            margin-right: 40px;
+        }
+
+        /* Contenedor del reporte */
+        #report-container {
+            position: fixed; /* Fijo en la pantalla */
+            top: 0; /* No se ajusta para dejar espacio para la barra */
+            left: 0;
+            width: 100%;
+            height: 100vh; /* Ocupa toda la altura de la pantalla */
+            overflow: hidden;
+            display: none; /* Oculto por defecto */
+        }
+
+        /* Iframe del reporte */
+        #report-frame {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1; /* Asegura que esté debajo de la barra blanca */
+        }
+
+        /* Barra blanca sobre el reporte */
+        #white-bar {
+            position: fixed; /* Fija la barra en la parte inferior */
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3.5vh;
+            background-color: white;
+            z-index: 10; /* Asegura que esté sobre el reporte */
+        }
+
+        /* GIF animado en la esquina inferior izquierda */
+        #animated-gif {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            width: 240px;
+            height: auto;
+            z-index: 100;
+        }
+
+        /* Estilo para los reportes y correo */
+        #main-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 18vh;
+        }
+
+        #access-form {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        #access-form input {
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            width: 280px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #access-form button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #201F1C;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        #access-form button:hover {
+            background-color: #333;
+        }
+
+        #error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <div id="navbar">
+        <h1>IR Reports</h1>
+        <img src="https://th.bing.com/th/id/OIP.E0Ma8wUHT9O6QhlJrUl7IQHaDI?rs=1&pid=ImgDetMain" alt="Logo">
+    </div>
+
+    <!-- Lista de reportes y formulario de acceso -->
+    <div id="main-content">
+        <h2>Select Report</h2>
+        <form id="access-form">
+            <label for="report">Choose a report:</label>
+            <br>
+            <select id="report">
+                <option value="sales-report">IR Sales Analysis Report</option>
+                <option value="rdb-sales-report">IR&RDB Sales Analysis Report</option>
+            </select>
+            <br><br>
+            <label for="email">Enter your email:</label>
+            <br>
+            <input type="email" id="email" placeholder="Enter your email">
+            <br>
+            <button type="button" onclick="validateAccess()">Enter</button>
+            <p id="error-message">Unauthorized email. Please try again.</p>
+        </form>
+    </div>
+
+    <!-- GIF animado en la esquina inferior izquierda -->
+    <img id="animated-gif" src="https://media0.giphy.com/media/D4uJFngv7IeqUKnjAX/giphy.gif" alt="GIF Animado">
+
+    <!-- Contenedor del reporte -->
+    <div id="report-container">
+        <iframe id="report-frame" src="" allowFullScreen="true"></iframe>
+        <!-- Barra blanca sobre el reporte en la parte inferior -->
+        <div id="white-bar"></div>
+    </div>
+
+    <script>
+    // Listas de correos permitidos para cada reporte
+    const allowedEmails = {
+        "sales-report": [
+            "melanie.romero@oppo-aed.co",
+            "user1@oppo-aed.co"
+        ],
+        "rdb-sales-report": [
+            "melanie.romero@oppo-aed.co",
+            "user2@oppo-aed.co"
+        ]
+    };
+
+    function validateAccess() {
+        const inputEmail = document.getElementById("email").value.trim().toLowerCase();
+        const errorMessage = document.getElementById("error-message");
+        const report = document.getElementById("report").value;
+
+        // Verificar si el correo pertenece a la lista del reporte seleccionado
+        if (allowedEmails[report] && allowedEmails[report].includes(inputEmail)) {
+            // Ocultamos la barra de navegación
+            document.getElementById("navbar").style.display = "none";
+
+            // Ocultamos el contenido principal
+            document.getElementById("main-content").style.display = "none";
+
+            // Ocultamos el GIF animado
+            document.getElementById("animated-gif").style.display = "none";
+
+            // Mostramos el reporte
+            document.getElementById("report-container").style.display = "block";
+
+            // Asignamos el URL del reporte según la selección
+            const reportUrls = {
+                "sales-report": "https://app.powerbi.com/view?r=eyJrIjoiNThmZmYyMmMtNmQ0Mi00NTNkLTljNmUtYmM3NmQwZjA3YmZlIiwidCI6IjkyNDJjYWMwLTljODktNDFkYS04OGY4LWNjMjBiMjNiNmQ4ZCJ9",
+                "rdb-sales-report": "https://app.powerbi.com/view?r=eyJrIjoiNjM1N2I0YTAtZjk5ZS00ZTBjLWFiMjQtNDRlNDU4MzEyZWE2IiwidCI6IjkyNDJjYWMwLTljODktNDFkYS04OGY4LWNjMjBiMjNiNmQ4ZCJ9"
+            };
+
+            document.getElementById("report-frame").src = reportUrls[report];
+
+        } else {
+            errorMessage.style.display = "block";
+        }
+    }
+    </script>
+</body>
+</html>
